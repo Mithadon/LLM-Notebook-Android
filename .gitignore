@@ -22,3 +22,12 @@ app/build/
 *.aab
 *.keystore
 *.jks
+
+# Gradle files
+gradle/
+gradlew
+gradlew.bat
+build.gradle
+settings.gradle
+gradle.properties
+app/build.gradle
