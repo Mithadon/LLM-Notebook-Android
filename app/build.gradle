@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.sporkllm.app'
+    namespace 'com.llmnotebook.app'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.sporkllm.app"
+        applicationId "com.llmnotebook.app"
         minSdk 26
         targetSdk 34
         versionCode 1
@@ -23,7 +23,7 @@ android {
     signingConfigs {
         release {
             // You'll configure these in Android Studio's signing configuration
-            storeFile file("sporkllm.keystore")
+            storeFile file("llmnotebook.keystore")
             storePassword System.getenv("KEYSTORE_PASSWORD")
             keyAlias System.getenv("KEY_ALIAS")
             keyPassword System.getenv("KEY_PASSWORD")
