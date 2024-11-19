@@ -30,3 +30,4 @@ build.gradle
 settings.gradle
 gradle.properties
 app/build.gradle
+LLM-Notebook.code-workspace
