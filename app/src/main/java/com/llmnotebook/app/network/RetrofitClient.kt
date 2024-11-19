@@ -1,6 +1,7 @@
 package com.llmnotebook.app.network
 
 import android.util.Log
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.llmnotebook.app.util.ApiKeyManager
 import okhttp3.OkHttpClient
@@ -10,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "https://openrouter.ai/"
+    private const val BASE_URL = "https://openrouter.ai/api/v1/"
     private const val TAG = "RetrofitClient"
 
     private val loggingInterceptor = HttpLoggingInterceptor { message ->
@@ -22,26 +23,39 @@ object RetrofitClient {
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor { chain ->
             val original = chain.request()
-            val apiKey = ApiKeyManager.getStoredApiKey()
-            Log.d(TAG, "Using API key: ${apiKey?.take(5)}...")
             
-            val request = original.newBuilder()
-                .header("Authorization", "Bearer ${apiKey}")
+            // Don't modify the Authorization header if it's already set (for validation)
+            val request = if (original.header("Authorization") != null) {
+                original
+            } else {
+                val apiKey = ApiKeyManager.getStoredApiKey()
+                Log.d(TAG, "Using stored API key: ${apiKey?.take(5)}...")
+                
+                original.newBuilder()
+                    .header("Authorization", "Bearer $apiKey")
+                    .build()
+            }
+
+            // Add common headers
+            val finalRequest = request.newBuilder()
                 .header("HTTP-Referer", "android://com.llmnotebook.app")
                 .header("X-Title", "LLM-Notebook Android")
+                .header("Accept", "text/event-stream")
+                .header("Content-Type", "application/json")
                 .build()
-            chain.proceed(request)
+
+            chain.proceed(finalRequest)
         }
         .addInterceptor(loggingInterceptor)
         // Increase timeouts for streaming
-        .readTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(0, TimeUnit.SECONDS) // No timeout for streaming
         .writeTimeout(60, TimeUnit.SECONDS)
         .connectTimeout(60, TimeUnit.SECONDS)
         // Disable retries for streaming
         .retryOnConnectionFailure(false)
         .build()
 
-    private val gson = GsonBuilder()
+    val gson: Gson = GsonBuilder()
         .setLenient() // Important for parsing streaming responses
         .create()
 
