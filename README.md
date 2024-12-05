@@ -1,3 +1,6 @@
+> [!WARNING]
+> The app is currently broken.
+
 # LLM-Notebook Android
 
 This is the Android companion app to [LLM-Notebook](https://github.com/Mithadon/LLM-Notebook), a powerful interface for interacting with large language models through OpenRouter's API. The Android app aims to provide the same functionality as the desktop version in a mobile-friendly package.
